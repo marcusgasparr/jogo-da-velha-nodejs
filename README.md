@@ -1,4 +1,4 @@
-Jogo da velha para console do navegador.
+Jogo da velha versão para Node Js.
 
 Utilize o teclado numérico para marcar a posição escolhida.
 

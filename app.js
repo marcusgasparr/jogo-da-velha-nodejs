@@ -1,3 +1,5 @@
+const stdin = process.openStdin();
+
 let jogo = {
   iniciarNovoJogo() {
     jogo = {
@@ -11,12 +13,12 @@ let jogo = {
 
   imprimir() {
     console.log(`
-        ${jogo.campo[6]} | ${jogo.campo[7]} | ${jogo.campo[8]}
-      ------------
-        ${jogo.campo[3]} | ${jogo.campo[4]} | ${jogo.campo[5]}
-      ------------
-        ${jogo.campo[0]} | ${jogo.campo[1]} | ${jogo.campo[2]}
-        `);
+          ${jogo.campo[6]} | ${jogo.campo[7]} | ${jogo.campo[8]}
+        ------------
+          ${jogo.campo[3]} | ${jogo.campo[4]} | ${jogo.campo[5]}
+        ------------
+          ${jogo.campo[0]} | ${jogo.campo[1]} | ${jogo.campo[2]}
+          `);
   },
 
   trocarJogador() {
@@ -44,12 +46,10 @@ let jogo = {
       jogo.comparar(0, 1, 2) || //linha
       jogo.comparar(3, 4, 5) || //linha
       jogo.comparar(6, 7, 8) || //linha
-      
       jogo.comparar(0, 3, 6) || //coluna
       jogo.comparar(1, 4, 7) || //coluna
       jogo.comparar(2, 5, 8) || //coluna
       jogo.comparar(0, 4, 8) ||
-      
       jogo.comparar(2, 4, 6) //diagonal
     );
   },
@@ -72,21 +72,30 @@ let jogo = {
   },
 };
 
-function iniciar() {
-  jogo.iniciarNovoJogo();
-  while (!jogo.jogoFinalizado) {
-    console.clear();
-    jogo.imprimir();
-    console.log(`O jogador atual é: ${jogo.jogadorAtual}`);
-    const posicao = parseInt(prompt("Escolha a posisção: "));
-    if (!posicao) {
-      break;
-    }
+jogo.iniciarNovoJogo();
+console.clear();
+jogo.imprimir();
+console.log(`Jogador atual: ${jogo.jogadorAtual}`);
+
+stdin.addListener("data", (line) => {
+  const posicao = parseInt(line.toString());
+
+  if (jogo.jogoFinalizado || !posicao) {
+    stdin.pause();
+  } else {
     if (jogo.fazerJogada(posicao)) {
       jogo.trocarJogador();
     }
     jogo.jogoFinalizado = jogo.verficarFimDeJogo();
-  }
-}
 
-iniciar();
+    if (!jogo.jogoFinalizado) {
+      console.clear();
+      jogo.imprimir();
+      console.log(`Jogador atual: ${jogo.jogadorAtual}`);
+    } else {
+      process.exit();
+    }
+  }
+
+  //   stdin.pause();
+});
